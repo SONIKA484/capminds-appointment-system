@@ -189,15 +189,28 @@
 }
 
 /* --- ARRIVED STATUS STYLING --- */
+/* Status Badge Styling */
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
 .status-arrived {
-    background-color: #ecfdf5; 
-    border-left: 3px solid #10b981; 
-    color: #065f46;
-    padding: 4px 6px;
-    margin-top: 4px;
-    border-radius: 4px;
-    font-size: 0.7rem;
-    line-height: 1.2;
+    background-color: #e6fffa;
+    color: #38a169; /* Green for past/visited */
+}
+
+.status-today {
+    background-color: #fffaf0;
+    color: #dd6b20; /* Orange for today */
+}
+
+.status-future {
+    background-color: #ebf8ff;
+    color: #3182ce; /* Blue for future visits */
 }
 
 .arrived-text {
@@ -520,4 +533,16 @@ table {
 
 .edit-icon:hover, .delete-icon:hover {
     transform: scale(1.1); /* Subtle hover effect */
+}
+/* Center the Action header and the icons below it */
+th:last-child, .action-cell {
+    text-align: center;
+    min-width: 100px;
+}
+
+.action-cell {
+    display: flex;
+    justify-content: center;
+    gap: 15px; /* Gives nice space between pencil and trash can */
+    align-items: center;
 }

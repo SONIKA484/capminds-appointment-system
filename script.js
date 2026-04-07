@@ -84,23 +84,30 @@ function createDayDiv(day, month, year, isToday) {
                appDate.getFullYear() === year;
     });
 
-    dayApps.forEach(app => {
-        const appEl = document.createElement('div');
-        // Figma Green "Arrived" Look
-        appEl.classList.add('status-arrived');
-        
-        appEl.innerHTML = `
-            <div>
-                <span class="arrived-text">${app.patientName}</span> (Arrived)
-                <div style="font-size: 0.65rem; opacity: 0.8;">${app.time}</div>
-            </div>
-            <div style="cursor:pointer; display:flex; gap:4px;">
-                <span onclick="event.stopPropagation(); openEditModal(${app.id})">✏️</span>
-                <span onclick="event.stopPropagation(); deleteAppointment(${app.id})">🗑️</span>
-            </div>
-        `;
-        div.appendChild(appEl);
-    });
+    // Find this inside createDayDiv
+dayApps.forEach(app => {
+    const appDate = new Date(app.date);
+    const comparisonDate = new Date("2026-04-07");
+    
+    // Logic to show Scheduled or Arrived on calendar
+    const label = appDate < comparisonDate ? "Arrived" : "Scheduled";
+    const cssClass = appDate < comparisonDate ? "status-arrived" : "status-future";
+
+    const appEl = document.createElement('div');
+    appEl.classList.add(cssClass); // Now dynamic!
+    
+    appEl.innerHTML = `
+        <div>
+            <span class="arrived-text">${app.patientName}</span> (${label})
+            <div style="font-size: 0.65rem; opacity: 0.8;">${formatAMPM(app.time)}</div>
+        </div>
+        <div style="cursor:pointer; display:flex; gap:4px;">
+            <span onclick="event.stopPropagation(); openEditModal(${app.id})">✏️</span>
+            <span onclick="event.stopPropagation(); deleteAppointment(${app.id})">🗑️</span>
+        </div>
+    `;
+    div.appendChild(appEl);
+});
 
     calendarDays.appendChild(div);
 }
@@ -152,30 +159,47 @@ function renderTable(filteredApps = appointments) {
     if (!tableBody) return;
     tableBody.innerHTML = '';
 
+    const comparisonDate = new Date("2026-04-07");
+
     filteredApps.forEach(app => {
+        const appDate = new Date(app.date);
+        let statusText = "";
+        let statusClass = "";
+
+        if (appDate < comparisonDate) {
+            statusText = "Arrived";
+            statusClass = "status-arrived";
+        } else if (appDate.getTime() === comparisonDate.getTime()) {
+            statusText = "Today";
+            statusClass = "status-today";
+        } else {
+            statusText = "Scheduled";
+            statusClass = "status-future";
+        }
+
         const row = document.createElement('tr');
         row.innerHTML = `
-    <td>${app.patientName}</td>
-    <td>${app.doctorName}</td>
-    <td>${app.hospitalName}</td>
-    <td>${app.specialty}</td>
-    <td>${app.date}</td>
-    <td style="color: #4285f4; font-weight: 500;">
-        ${formatAMPM(app.time)} - 12:15 PM
-    </td> 
-    <td class="action-cell">
-        <i data-lucide="edit-3" class="edit-icon" style="width: 16px; height: 16px;" onclick="openEditModal(${app.id})"></i>
-        <i data-lucide="trash-2" class="delete-icon" style="width: 16px; height: 16px;" onclick="deleteAppointment(${app.id})"></i>
-    </td>
-`;
+            <td>${app.patientName}</td>
+            <td>${app.doctorName}</td>
+            <td>${app.hospitalName}</td>
+            <td>${app.specialty}</td>
+            <td>${app.date}</td>
+            <td style="color: #4285f4; font-weight: 500;">
+                ${formatAMPM(app.time)} - 12:15 PM
+            </td> 
+            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+            <td class="action-cell" style="text-align: center;">
+                <i data-lucide="edit-3" class="edit-icon" style="width: 16px; height: 16px; cursor: pointer; margin-right: 8px;" onclick="openEditModal(${app.id})"></i>
+                <i data-lucide="trash-2" class="delete-icon" style="width: 16px; height: 16px; cursor: pointer;" onclick="deleteAppointment(${app.id})"></i>
+            </td>
+        `;
         tableBody.appendChild(row);
     });
-    // This line is important to render the icons after adding them to the DOM
+
     if (window.lucide) {
         lucide.createIcons();
     }
 }
-
 // 7. LISTENERS
 function setupEventListeners() {
     // Navigation
@@ -214,6 +238,25 @@ function setupEventListeners() {
 
     // Close Modal
     window.onclick = (e) => { if (e.target == modal) closeModal(); };
+    // Add this inside the bottom of setupEventListeners function
+    const patientSearch = document.querySelector('input[placeholder="Patient Search"]');
+    const doctorSearch = document.querySelector('input[placeholder="Doctor Search"]');
+
+    if (patientSearch && doctorSearch) {
+        const filterData = () => {
+            const pValue = patientSearch.value.toLowerCase();
+            const dValue = doctorSearch.value.toLowerCase();
+            
+            const filtered = appointments.filter(app => 
+                app.patientName.toLowerCase().includes(pValue) && 
+                app.doctorName.toLowerCase().includes(dValue)
+            );
+            renderTable(filtered);
+        };
+
+        patientSearch.addEventListener('input', filterData);
+        doctorSearch.addEventListener('input', filterData);
+    }
 }
 
 // Helper Functions
