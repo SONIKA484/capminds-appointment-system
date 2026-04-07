@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capminds Appointment System</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="logo-container">
+                <img src="images.jpg" alt="Logo" class="company-icon">
+                <span class="company-name">CAPMINDS</span>
+            </div>
+            
+            <div class="toggle-container">
+                <button id="sidebar-toggle" class="toggle-btn">
+                    <i data-lucide="chevrons-right"></i>
+                </button>
+            </div>
+
+            <nav class="nav-menu">
+                <div id="nav-calendar" class="nav-item active">
+                    <i data-lucide="calendar" class="nav-icon"></i>
+                    <span class="nav-text">Calendar</span>
+                </div>
+                <div id="nav-dashboard" class="nav-item">
+                    <i data-lucide="layout-dashboard" class="nav-icon"></i>
+                    <span class="nav-text">Dashboard</span>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <button class="btn-primary" id="book-appointment-btn">+ Book Appointment</button>
+            </header>
+
+            <section id="calendar-page" class="page-view">
+                <div class="doctor-name-label">James Marry</div>
+                <div class="calendar-header">
+                    <div class="calendar-nav">
+                        <button id="prev-month" class="nav-arrow"><i data-lucide="chevron-left"></i></button>
+                        <button id="current-month-year" class="date-btn-style"></button>
+                        <button id="next-month" class="nav-arrow"><i data-lucide="chevron-right"></i></button>
+                    </div>
+                    <div class="calendar-controls">
+                        <button id="today-btn" class="btn-secondary">Today</button>
+                        <select class="view-dropdown"><option>Month</option></select>
+                    </div>
+                </div>
+                <div class="calendar-grid-container">
+                    <div class="weekday-header">
+                        <div>SUNDAY</div><div>MONDAY</div><div>TUESDAY</div><div>WEDNESDAY</div><div>THURSDAY</div><div>FRIDAY</div><div>SATURDAY</div>
+                    </div>
+                    <div id="calendar-days" class="days-grid"></div>
+                </div>
+            </section>
+
+            <section id="dashboard-page" class="page-view" style="display: none;">
+                <div class="dashboard-header-container">
+                    <h1 class="dashboard-title">Practice Dashboard</h1>
+                </div>
+
+                <div class="filters-container">
+    <div class="search-input-group">
+    <i data-lucide="search" class="search-icon"></i>
+    <input type="text" id="search-patient" placeholder="Patient Search">
+</div>
+
+    <div class="search-input-group">
+        <i data-lucide="search" class="search-icon"></i>
+        <input type="text" id="search-doctor" placeholder="Doctor Search">
+    </div>
+
+    <div class="date-range-wrapper">
+        <input type="date" class="range-date-input">
+        <span class="to-separator">-</span>
+        <input type="date" class="range-date-input">
+    </div>
+
+    <button id="filter-update-btn" class="btn-update">Update</button>
+</div>
+
+                <div class="table-card">
+                    <div class="table-header-row"><h3>Appointment Details</h3></div>
+                    <div class="table-scroller">
+                        <table>
+                            <thead class="dashboard-thead">
+                                <tr>
+                                    <th>Patient</th><th>Doctor</th><th>Hospital</th>
+                                    <th>Specialty</th><th>Select Date</th><th>Select Time</th><th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="appointment-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Schedule Appointment</h2>
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+            </div>
+            <form id="appointment-form">
+                <div class="form-row">
+                    <div class="input-group"><i data-lucide="user" class="field-icon"></i><input type="text" name="patientName" placeholder="Patient Name" required></div>
+                    <div class="input-group"><i data-lucide="user-plus" class="field-icon"></i><input type="text" name="doctorName" placeholder="Doctor Name"></div>
+                </div>
+                <div class="form-row">
+                    <div class="input-group"><i data-lucide="map-pin" class="field-icon"></i><input type="text" name="hospitalName" placeholder="Hospital Name"></div>
+                    <div class="input-group"><i data-lucide="info" class="field-icon"></i><input type="text" name="specialty" placeholder="Specialty"></div>
+                </div>
+                <div class="form-row">
+                    <div class="input-group"><i data-lucide="calendar" class="field-icon"></i><input type="date" name="date" required></div>
+                    <div class="input-group"><i data-lucide="clock" class="field-icon"></i><input type="time" name="time"></div>
+                </div>
+                <textarea name="reason" rows="3" placeholder="Reason"></textarea>
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn-save">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>
